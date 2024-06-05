@@ -34,14 +34,13 @@ type UserLoginDTO {
 }
 
 type Query {
-  user(id: Int!): User!
+  findUser(id: String!): User!
+  me: User!
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   login(login: LoginInput!): UserLoginDTO!
-  updateUser(updateUserInput: UpdateUserInput!): User!
-  removeUser(id: Int!): User!
 }
 
 input CreateUserInput {
@@ -55,13 +54,4 @@ input CreateUserInput {
 input LoginInput {
   email: String!
   password: String!
-}
-
-input UpdateUserInput {
-  fullName: String
-  email: String
-  password: String
-  phoneNumber: String
-  role: userRoles
-  id: Int!
 }

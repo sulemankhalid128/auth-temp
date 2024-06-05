@@ -19,6 +19,14 @@ export class UserLoginDTO{
 
 }
 
+export class CurrentUser {
+    email: string;
+    userId: string;
+    fullName:string;
+    roles?: Array<string>
+  }
+  
+
 
 @InputType()
 export class LoginInput{

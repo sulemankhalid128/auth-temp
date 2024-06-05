@@ -3,16 +3,17 @@ import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
-import { LoginInput, UserLoginDTO } from './dto/login-user.dto';
+import { CurrentUser, LoginInput, UserLoginDTO } from './dto/login-user.dto';
 import { Public } from './auth/public.decorator';
+import { AuthUser } from './decorators/graphql-user.decorator';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Mutation(() => User)
-  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return this.userService.create(createUserInput);
+  async createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+    return await this.userService.create(createUserInput);
   }
 
   @Public()
@@ -21,18 +22,24 @@ export class UserResolver {
     return await this.userService.login(loginInput);
   }
 
-  @Query(() => User, { name: 'user' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.userService.findOne(id);
+  @Query(() => User, { name: 'findUser' })
+  async findOneUser(@Args('id', { type: () => String }) id: string) {
+    return await this.userService.findOne(id);
   }
 
-  @Mutation(() => User)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.userService.update(updateUserInput.id, updateUserInput);
+
+  @Query(() => User, { name: 'me' })
+  async me(@AuthUser() user:CurrentUser) {
+    return await this.userService.findOne(user.userId);
   }
 
-  @Mutation(() => User)
-  removeUser(@Args('id', { type: () => Int }) id: number) {
-    return this.userService.remove(id);
-  }
+//   @Mutation(() => User)
+//  async updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
+//     return await this.userService.upsdate(updateUserInput.id, updateUserInput);
+//   }
+
+//   @Mutation(() => User)
+//   async removeUser(@Args('id', { type: () => String }) id: string) {
+//     return await this.userService.remove(id);
+//   }
 }

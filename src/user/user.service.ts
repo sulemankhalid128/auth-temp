@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -74,15 +74,13 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string):Promise<User> {
+   const user = await this.userRepo.findOne({where:{id}})
+   if(!user) throw new HttpException('User not Found!', HttpStatus.NOT_FOUND)
+   return user
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
-  }
+ 
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+ 
 }

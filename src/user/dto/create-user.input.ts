@@ -21,3 +21,6 @@ export class CreateUserInput {
   role: UserRole;
 
 }
+
+@InputType()
+export class UpdateUserInput extends CreateUserInput{}
