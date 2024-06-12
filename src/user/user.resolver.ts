@@ -11,8 +11,9 @@ import { AuthUser } from './decorators/graphql-user.decorator';
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Mutation(() => User)
-  async createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+  @Public()
+  @Mutation(() => UserLoginDTO)
+  async createUser(@Args('createUserInput') createUserInput: CreateUserInput):Promise<UserLoginDTO> {
     return await this.userService.create(createUserInput);
   }
 
@@ -27,7 +28,11 @@ export class UserResolver {
     return await this.userService.findOne(id);
   }
 
-
+/**
+ * 
+ * @param user 
+ * @returns User detail
+ */
   @Query(() => User, { name: 'me' })
   async me(@AuthUser() user:CurrentUser) {
     return await this.userService.findOne(user.userId);

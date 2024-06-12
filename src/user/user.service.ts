@@ -19,7 +19,8 @@ export class UserService {
   ){
 
   }
- async create(createUserInput: CreateUserInput) :Promise<User> {
+ async create(createUserInput: CreateUserInput) :Promise<UserLoginDTO> {
+  try {
     const {email, role,...result} = createUserInput;
     const emailExist = await this.userRepo.findOneBy({email})
     if(emailExist){
@@ -31,7 +32,12 @@ export class UserService {
       roles:[currentRole],
       email
     })
-    return user
+    const token = this.jwtService.sign({userId:user.id, email:user.email});
+    return {userId:user?.id, token, email:user?.email, roles:user?.roles?.map(item => item?.role)}
+  } catch (error) {
+    throw new InternalServerErrorException(error);
+  }
+   
   }
 
   async verifyJwt(token: string): Promise<UserLoginDTO> {
@@ -64,7 +70,7 @@ export class UserService {
 
   generateToken({id, email, fullName}){
     try {
-      return this.jwtService.sign({id, email, fullName});
+      return this.jwtService.sign({userId:id, email, fullName});
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
