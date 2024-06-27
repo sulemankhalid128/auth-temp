@@ -9,6 +9,7 @@ import configuration from './config/configuration';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { JwtGuard } from './user/auth/jwt.guard';
+import { RedisModule } from './redis/redis.module';
 const { entities, migrations, ...options } = dataSourceOptions;
 
 @Module({
@@ -28,6 +29,7 @@ const { entities, migrations, ...options } = dataSourceOptions;
       // formatError,
     }),
     UserModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [
